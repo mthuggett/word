@@ -1,15 +1,39 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    {{ data }}
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from 'axios'
+
+const options = {
+  method: 'GET',
+  url: 'https://' + process.env.VUE_APP_WORDAPI_HOST + '/words/example',
+  headers: {
+    'x-rapidapi-key': process.env.VUE_APP_WORDAPI_KEY,
+    'x-rapidapi-host': process.env.VUE_APP_WORDAPI_HOST
+  }
+}; 
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    
+  },
+  data() {
+    return {
+      data: ''
+    }
+  },
+  mounted() {
+    axios.request(options)
+    .then(response => {
+      this.data = response
+    })
+    .catch(error => {
+      this.data = error
+    })
   }
 }
 </script>
