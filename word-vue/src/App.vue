@@ -6,6 +6,19 @@
 
 <script>
 import axios from 'axios'
+import * as winston from 'winston'
+import BrowserConsole from 'winston-transport-browserconsole'
+import 'setimmediate'
+
+const level = "debug";
+winston.configure({
+  transports: [
+    new BrowserConsole({
+      format: winston.format.simple(),
+      level
+    })
+  ]
+});
 
 const options = {
   method: 'GET',
@@ -30,9 +43,10 @@ export default {
     axios.request(options)
     .then(response => {
       this.data = response
+      winston.debug('DEBUG', { 'Word Return Object': response})
     })
     .catch(error => {
-      this.data = error
+      winston.error('ERROR', { 'Error': error })
     })
   }
 }
