@@ -1,1 +1,3 @@
 /word-vue/.env.local
+/word-vue/node_modules/
+log.txt
