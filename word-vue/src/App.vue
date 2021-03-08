@@ -2,7 +2,7 @@
   <div class="app-container">
     <form @submit.prevent="sendWord">
       <InputText type="text" v-model="text"/>
-      <Button type="submit" label="Submit"/>
+      <Button class="p-ml-3" type="submit" label="Submit"/>
     </form>
     <div class="p-d-flex p-jc-center p-mt-4" v-if="data">
       <Card style="width: 25em;">
@@ -17,7 +17,7 @@
         </template>
         <template #content>
           <ul v-for="(result, index) in data.results" :key="index">
-            <li> {{ result.definition }} </li>
+            <li style="text-align: left;"> {{ result.definition }} </li>
           </ul>
         </template>
         <template #footer>
