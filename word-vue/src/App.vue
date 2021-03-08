@@ -25,6 +25,9 @@
         </template>
       </Card>
     </div>
+    <div class="p-d-flex p-jc-center p-mt-4" v-else>
+      {{ error }}
+    </div>
   </div>
 </template>
 
@@ -55,6 +58,7 @@ export default {
   data() {
     return {
       data: '',
+      error: '',
       text: null
     }
   },
@@ -64,6 +68,7 @@ export default {
       this.$toast.add({severity: 'info', summary: 'Hello' + this.text})
     },
     getDefinition(word) {
+      this.data = null
       axios.request({
         method: 'GET',
         url: 'https://' + process.env.VUE_APP_WORDAPI_HOST + '/words/' +word,
@@ -77,7 +82,8 @@ export default {
         winston.debug('DEBUG', { 'Word Return Object': response})
       })
       .catch(error => {
-        winston.error('ERROR', { 'Error': error })
+        this.error = error.response.data.message
+        winston.error('ERROR', { 'Error': error.response.data.message })
       })
     }
   },
