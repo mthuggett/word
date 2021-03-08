@@ -1,6 +1,30 @@
 <template>
-  <div>
-    {{ data }}
+  <div class="app-container">
+    <form @submit.prevent="sendWord">
+      <InputText type="text" v-model="text"/>
+      <Button type="submit" label="Submit"/>
+    </form>
+    <div class="p-d-flex p-jc-center p-mt-4" v-if="data">
+      <Card style="width: 25em;">
+        <template #header>
+          <img src="/images/dict.png">
+        </template>
+        <template #title>
+          {{ data.word }}
+        </template>
+        <template #subtitle>
+          {{ data.results.length }} definitions available
+        </template>
+        <template #content>
+          <ul v-for="(result, index) in data.results" :key="index">
+            <li> {{ result.definition }} </li>
+          </ul>
+        </template>
+        <template #footer>
+          Frequency: {{ data.frequency }}
+        </template>
+      </Card>
+    </div>
   </div>
 </template>
 
@@ -9,6 +33,9 @@ import axios from 'axios'
 import * as winston from 'winston'
 import BrowserConsole from 'winston-transport-browserconsole'
 import 'setimmediate'
+
+import 'primeflex/primeflex.css'
+import Card from 'primevue/card'
 
 const level = "debug";
 winston.configure({
@@ -20,34 +47,49 @@ winston.configure({
   ]
 });
 
-const options = {
-  method: 'GET',
-  url: 'https://' + process.env.VUE_APP_WORDAPI_HOST + '/words/example',
-  headers: {
-    'x-rapidapi-key': process.env.VUE_APP_WORDAPI_KEY,
-    'x-rapidapi-host': process.env.VUE_APP_WORDAPI_HOST
-  }
-}; 
-
 export default {
   name: 'App',
   components: {
-    
+    Card
   },
   data() {
     return {
-      data: ''
+      data: '',
+      text: null
+    }
+  },
+  methods: {
+    sendWord() {
+      this.getDefinition(this.text)
+      this.$toast.add({severity: 'info', summary: 'Hello' + this.text})
+    },
+    getDefinition(word) {
+      axios.request({
+        method: 'GET',
+        url: 'https://' + process.env.VUE_APP_WORDAPI_HOST + '/words/' +word,
+        headers: {
+          'x-rapidapi-key': process.env.VUE_APP_WORDAPI_KEY,
+          'x-rapidapi-host': process.env.VUE_APP_WORDAPI_HOST
+        }
+        })
+      .then(response => {
+        this.data = response.data
+        winston.debug('DEBUG', { 'Word Return Object': response})
+      })
+      .catch(error => {
+        winston.error('ERROR', { 'Error': error })
+      })
     }
   },
   mounted() {
-    axios.request(options)
-    .then(response => {
-      this.data = response
-      winston.debug('DEBUG', { 'Word Return Object': response})
-    })
-    .catch(error => {
-      winston.error('ERROR', { 'Error': error })
-    })
+    // axios.request(options)
+    // .then(response => {
+    //   this.data = response
+    //   winston.debug('DEBUG', { 'Word Return Object': response})
+    // })
+    // .catch(error => {
+    //   winston.error('ERROR', { 'Error': error })
+    // })
   }
 }
 </script>
